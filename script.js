@@ -133,6 +133,8 @@ buttonExam.addEventListener('click', function() {
 let selectedCard;
 currentIndex = 0;
 
+let cardsCompleted = 0;
+
 function wordTranslation(currentCard) {
   if (!selectedCard) {
     removeCards();
@@ -140,41 +142,47 @@ function wordTranslation(currentCard) {
     selectedCard = currentCard;
     currentCard.style.pointerEvents = "none";
   } else {
-      const wordObject = arr.find(word => word.translation === selectedCard.textContent || word.title === selectedCard.textContent);
-      if (selectedCard !== currentCard) {
-          if (wordObject.translation === currentCard.textContent  || wordObject.title === currentCard.textContent) {
-              currentIndex++;
-              correctPercent.textContent = Math.round(100 * currentIndex / arr.length) + '%';
-              examProgress.value = (currentIndex) / arr.length * 100;
-              currentCard.classList.add('correct');
-              removeCorrectCards([currentCard, selectedCard]);
-              const cards = document.querySelectorAll('.card');
-              let disappeared = true;
-              currentCard.style.pointerEvents = "none";
-              cards.forEach(card => {
-                  if (!card.classList.contains('fade-out')) {
-                    disappeared = false;
-                  }
-              });
-              if (disappeared) {
-                  setTimeout(() => {
-                    alert('Проверка знаний успешно завершена!');
-                    clearInterval(timerId);
-                    isRunning = false;
-                    statistics();
-                  }, 1000);
-              }
-          } else {
-              selectedCard.classList.add('correct');
-              currentCard.classList.add('wrong');
-              setTimeout(() => {
-                removeCards();
-              }, 500);
-              currentCard.style.pointerEvents = "all";
-              selectedCard.style.pointerEvents = "all";
+    const wordObject = arr.find(word => word.translation === selectedCard.textContent || word.title === selectedCard.textContent);
+
+    if (selectedCard !== currentCard) {
+      if (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent) {
+        currentIndex++;
+        cardsCompleted++;
+
+        const percentage = Math.min(cardsCompleted * 17, 100);
+        correctPercent.textContent = percentage + '%';
+        examProgress.value = percentage;
+
+        currentCard.classList.add('correct');
+        removeCorrectCards([currentCard, selectedCard]);
+
+        const cards = document.querySelectorAll('.card');
+        const disappeared = true;
+        currentCard.style.pointerEvents = "none";
+        cards.forEach(card => {
+          if (!card.classList.contains('fade-out')) {
+            disappeared = false;
           }
+        });
+
+        if (disappeared) {
+          setTimeout(() => {
+            alert('Проверка знаний успешно завершена!');
+            clearInterval(timerId);
+            isRunning = false;
+          }, 1000);
+        }
+      } else {
+        selectedCard.classList.add('correct');
+        currentCard.classList.add('wrong');
+        setTimeout(() => {
+          removeCards();
+        }, 500);
+        currentCard.style.pointerEvents = "all";
+        selectedCard.style.pointerEvents = "all";
       }
-      selectedCard = null;
+    }
+    selectedCard = null;
   }
 }
 
