@@ -157,7 +157,7 @@ function wordTranslation(currentCard) {
         removeCorrectCards([currentCard, selectedCard]);
 
         const cards = document.querySelectorAll('.card');
-        const disappeared = true;
+        let disappeared = true;
         currentCard.style.pointerEvents = "none";
         cards.forEach(card => {
           if (!card.classList.contains('fade-out')) {
